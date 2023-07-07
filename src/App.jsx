@@ -1,4 +1,4 @@
-import Header from "./components/Header";
+import Header from "./components/Header"; // ✅
 import InputField from "./components/InputField";
 import Map from "./components/Map";
 
