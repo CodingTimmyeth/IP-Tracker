@@ -55,7 +55,7 @@ function App() {
           <div className="w-full">
             <input
               type="text"
-              placeholder="Search for any IP Adress or Domain"
+              placeholder="Search for any IP Adress"
               className={`py-4 px-7 rounded-2xl outline-none text-black w-full rounded-r-none border cursor-pointer ${
                 isValid ? "" : "border-red-500 border-2"
               }`}
