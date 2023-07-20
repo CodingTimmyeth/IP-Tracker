@@ -1,55 +1,74 @@
-import Header from "./components/Header"; // ✅
+import Header from "./components/Header";
 import IpInformation from "./components/IpInformation";
 import Map from "./components/Map";
 import { useState } from "react";
 
 function App() {
-  const [userIpAddress, setUserIpAddress] = useState("");
-  const [ip, setIp] = useState("");
-  const [city, setCity] = useState("");
-  const [country, setCountry] = useState("");
-  const [timezone, setTimeZone] = useState("");
-  const [isp, setIsp] = useState("");
-  const [lat, setLat] = useState("");
-  const [lng, setLng] = useState("");
-  const [isValid, setIsValid] = useState(true);
+  const [formData, setFormData] = useState({
+    userIpAddress: "",
+    isValid: true,
+  });
 
-  const handleOnChange = (e) => {
-    setUserIpAddress(e.target.value);
-    // const ipV4Regex =
-    //   /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+  const [locationData, setLocationData] = useState({
+    ip: "",
+    city: "",
+    country: "",
+    timezone: "",
+    isp: "",
+    lat: "",
+    lng: "",
+  });
+
+  const { userIpAddress, isValid } = formData;
+  const { ip, city, country, timezone, isp, lat, lng } = locationData;
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      userIpAddress: e.target.value,
+    });
   };
 
-  // Fetching the data
   const handleFetchData = async () => {
     if (userIpAddress === "") {
-      alert("Please enter a IP Address");
+      alert("Please enter an IP Address");
       return;
     }
+
     try {
       const url = `https://geo.ipify.org/api/v2/country,city?apiKey=at_lfXFjIhblegGEefvocS4Ko7hkRWfM&ipAddress=${userIpAddress}`;
       const response = await fetch(url);
       const result = await response.json();
-      console.log(result);
-      setIp(result.ip);
-      setCity(result.location.city);
-      setCountry(result.location.country);
-      setTimeZone(result.location.timezone);
-      setIsp(result.isp);
-      setLat(result.location.lat);
-      setLng(result.location.lng);
-      setIsValid(true);
+      const { ip, city, isp } = result;
+      const { country, timezone, lat, lng } = result.location;
+
+      setLocationData({
+        ...locationData,
+        ip,
+        city,
+        country,
+        timezone,
+        isp,
+        lat,
+        lng,
+      });
+      setFormData({
+        ...formData,
+        isValid: true,
+      });
     } catch (error) {
       console.error("ERROR:", error);
-      setIsValid(false);
-      return;
+      setFormData({
+        ...formData,
+        isValid: false,
+      });
     }
   };
 
   return (
     <>
       <div className="w-screen bg-[url('/images/pattern-bg-mobile.png')] bg-no-repeat bg-cover h-[280px] lg:bg-[url('/images/pattern-bg-desktop.png')] lg:bg-cover lg:bg-no-repeat lg:h-[280px] lg:flex lg:flex-col lg:items-center lg:shadow-xl lg:relative">
-        <Header></Header>
+        <Header />
         <div className="flex justify-center lg:min-w-[496px]">
           {/* Input Address or Domain */}
           <div className="w-full">
@@ -59,11 +78,9 @@ function App() {
               className={`py-4 px-7 rounded-2xl outline-none text-black w-full rounded-r-none border cursor-pointer ${
                 isValid ? "" : "border-red-500 border-2"
               }`}
-              onChange={handleOnChange}
+              onChange={handleInputChange}
             />
-            {isValid ? (
-              ""
-            ) : (
+            {!isValid && (
               <p className="text-red-500 italic text-md">
                 Please Enter a valid IP Address
               </p>
